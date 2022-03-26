@@ -1,7 +1,6 @@
 package pet
 
 import (
-	"context"
 	"pet-catalog-api/app/models"
 	"pet-catalog-api/app/repository"
 	"time"
@@ -26,7 +25,7 @@ func (p *PetRepo) Fetch(limit int, page int) []*models.Pet {
 	return pets
 }
 
-func (pr *PetRepo) Create(ctx context.Context, p *models.Pet) error {
+func (pr *PetRepo) Create(p *models.Pet) error {
 	p.CreatedAt = time.Now()
 	p.UpdatedAt = time.Now()
 
@@ -39,9 +38,27 @@ func (pr *PetRepo) Create(ctx context.Context, p *models.Pet) error {
 	return nil
 }
 
-func (pr *PetRepo) GetByID(ctx context.Context, id int64) (models.Pet, error) {
+func (pr *PetRepo) GetByID(id int64) (models.Pet, error) {
 	pet := models.Pet{}
 	result := pr.Conn.First(&pet, id)
+
+	if result.Error != nil {
+		return pet, result.Error
+	}
+
+	return pet, nil
+}
+
+func (pr *PetRepo) Update(id int64, p models.UpdatePetInput) (models.Pet, error) {
+	pet := models.Pet{}
+	result := pr.Conn.First(&pet, id)
+
+	if result.Error != nil {
+		return pet, result.Error
+	}
+
+	p.UpdatedAt = time.Now()
+	result = pr.Conn.Model(pet).Updates(p)
 
 	if result.Error != nil {
 		return pet, result.Error

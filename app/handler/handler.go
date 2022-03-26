@@ -40,7 +40,7 @@ func (p *Pet) Fetch(w http.ResponseWriter, r *http.Request) {
 func (p *Pet) GetByID(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	result, err := p.repo.GetByID(r.Context(), int64(id))
+	result, err := p.repo.GetByID(int64(id))
 
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, err.Error())
@@ -54,13 +54,27 @@ func (p *Pet) Create(w http.ResponseWriter, r *http.Request) {
 	pet := models.Pet{}
 	json.NewDecoder(r.Body).Decode(&pet)
 
-	err := p.repo.Create(r.Context(), &pet)
+	err := p.repo.Create(&pet)
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Server Error")
 	}
 
 	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "Successfully Created"})
+}
+
+func (p *Pet) Update(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	data := models.UpdatePetInput{}
+
+	json.NewDecoder(r.Body).Decode(&data)
+	payload, err := p.repo.Update(int64(id), data)
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Server Error")
+	}
+
+	respondwithJSON(w, http.StatusNoContent, payload)
 }
 
 func setPageAndLimit(pageString string, limitString string) (int, int) {

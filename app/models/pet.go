@@ -11,3 +11,11 @@ type Pet struct {
 	CreatedAt   time.Time `json:"-"`
 	UpdatedAt   time.Time `json:"-"`
 }
+
+type UpdatePetInput struct {
+	Name        string    `json:"name,omitempty"`
+	Breed       string    `json:"breed,omitempty"`
+	Description string    `json:"description,omitempty"`
+	URL         string    `json:"url,omitempty"`
+	UpdatedAt   time.Time `json:"-"`
+}

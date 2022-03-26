@@ -31,6 +31,7 @@ func main() {
 	r.Get("/", pHandler.Fetch)
 	r.Post("/pets", pHandler.Create)
 	r.Get("/pets/{id}", pHandler.GetByID)
+	r.Put("/pets/{id}", pHandler.Update)
 
 	log.Println("Server listen at :3030")
 	http.ListenAndServe(":3030", r)
