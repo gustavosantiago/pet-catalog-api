@@ -8,4 +8,5 @@ import (
 type PetRepository interface {
 	Fetch(limit int, page int) []*models.Pet
 	Create(ctx context.Context, p *models.Pet) error
+	GetByID(ctx context.Context, id int64) (models.Pet, error)
 }

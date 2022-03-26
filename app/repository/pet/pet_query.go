@@ -38,3 +38,14 @@ func (pr *PetRepo) Create(ctx context.Context, p *models.Pet) error {
 
 	return nil
 }
+
+func (pr *PetRepo) GetByID(ctx context.Context, id int64) (models.Pet, error) {
+	pet := models.Pet{}
+	result := pr.Conn.First(&pet, id)
+
+	if result.Error != nil {
+		return pet, result.Error
+	}
+
+	return pet, nil
+}

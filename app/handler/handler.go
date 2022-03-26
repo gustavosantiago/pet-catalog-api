@@ -8,6 +8,7 @@ import (
 	"pet-catalog-api/app/repository/pet"
 	"strconv"
 
+	"github.com/go-chi/chi"
 	"gorm.io/gorm"
 )
 
@@ -33,6 +34,19 @@ func (p *Pet) Fetch(w http.ResponseWriter, r *http.Request) {
 	response := p.repo.Fetch(limit, page)
 
 	respondwithJSON(w, http.StatusOK, response)
+}
+
+// GetByID get a pet data by id
+func (p *Pet) GetByID(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+
+	result, err := p.repo.GetByID(r.Context(), int64(id))
+
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, err.Error())
+	}
+
+	respondwithJSON(w, http.StatusOK, result)
 }
 
 // Create a new post
