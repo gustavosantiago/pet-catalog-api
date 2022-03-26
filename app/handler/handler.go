@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"pet-catalog-api/app/models"
 	"pet-catalog-api/app/repository"
 	"pet-catalog-api/app/repository/pet"
 	"strconv"
@@ -34,6 +35,20 @@ func (p *Pet) Fetch(w http.ResponseWriter, r *http.Request) {
 	respondwithJSON(w, http.StatusOK, response)
 }
 
+// Create a new post
+func (p *Pet) Create(w http.ResponseWriter, r *http.Request) {
+	pet := models.Pet{}
+	json.NewDecoder(r.Body).Decode(&pet)
+
+	err := p.repo.Create(r.Context(), &pet)
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Server Error")
+	}
+
+	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "Successfully Created"})
+}
+
 func setPageAndLimit(pageString string, limitString string) (int, int) {
 	page, err := strconv.ParseInt(pageString, 10, 64)
 
@@ -57,4 +72,9 @@ func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(response)
+}
+
+// respondwithError return error message
+func respondWithError(w http.ResponseWriter, code int, msg string) {
+	respondwithJSON(w, code, map[string]string{"message": msg})
 }

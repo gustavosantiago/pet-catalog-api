@@ -29,6 +29,7 @@ func main() {
 
 	pHandler := handler.NewPetHandler(conn)
 	r.Get("/", pHandler.Fetch)
+	r.Post("/pets", pHandler.Create)
 
 	log.Println("Server listen at :3030")
 	http.ListenAndServe(":3030", r)
