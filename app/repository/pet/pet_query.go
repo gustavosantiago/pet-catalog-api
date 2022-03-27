@@ -20,7 +20,7 @@ func NewPetRepo(Conn *gorm.DB) repository.PetRepository {
 
 func (p *PetRepo) Fetch(limit int, page int) []*models.Pet {
 	var pets []*models.Pet
-	p.Conn.Limit(limit).Offset(page).Select("id", "name", "description", "breed", "url").Find(&pets)
+	p.Conn.Limit(limit).Offset(page).Select("id", "name", "description", "breed", "url").Find(&pets).Order("pets.id ASC")
 
 	return pets
 }
@@ -65,4 +65,8 @@ func (pr *PetRepo) Update(id int64, p models.UpdatePetInput) (models.Pet, error)
 	}
 
 	return pet, nil
+}
+
+func (pr *PetRepo) Delete(id int64) (bool, error) {
+	return true, nil
 }

@@ -31,9 +31,9 @@ func (p *Pet) Fetch(w http.ResponseWriter, r *http.Request) {
 
 	page, limit := setPageAndLimit(pageParams, limitParams)
 
-	response := p.repo.Fetch(limit, page)
+	result := p.repo.Fetch(limit, page)
 
-	respondwithJSON(w, http.StatusOK, response)
+	respondwithJSON(w, http.StatusOK, result)
 }
 
 // GetByID get a pet data by id
@@ -68,13 +68,25 @@ func (p *Pet) Update(w http.ResponseWriter, r *http.Request) {
 	data := models.UpdatePetInput{}
 
 	json.NewDecoder(r.Body).Decode(&data)
-	payload, err := p.repo.Update(int64(id), data)
+	result, err := p.repo.Update(int64(id), data)
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Server Error")
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 	}
 
-	respondwithJSON(w, http.StatusNoContent, payload)
+	respondwithJSON(w, http.StatusNoContent, result)
+}
+
+func (p *Pet) Delete(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+
+	_, err := p.repo.Delete(int64(id))
+
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+	}
+
+	respondwithJSON(w, http.StatusMovedPermanently, map[string]string{"message": "Delete Successfully"})
 }
 
 func setPageAndLimit(pageString string, limitString string) (int, int) {

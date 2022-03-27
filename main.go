@@ -28,10 +28,11 @@ func main() {
 	var conn *gorm.DB = database.ConnectDB()
 
 	pHandler := handler.NewPetHandler(conn)
-	r.Get("/", pHandler.Fetch)
+	r.Get("/pets", pHandler.Fetch)
 	r.Post("/pets", pHandler.Create)
 	r.Get("/pets/{id}", pHandler.GetByID)
 	r.Put("/pets/{id}", pHandler.Update)
+	r.Delete("/pets/{id}", pHandler.Delete)
 
 	log.Println("Server listen at :3030")
 	http.ListenAndServe(":3030", r)

@@ -9,4 +9,5 @@ type PetRepository interface {
 	GetByID(id int64) (models.Pet, error)
 	Create(p *models.Pet) error
 	Update(id int64, p models.UpdatePetInput) (models.Pet, error)
+	Delete(id int64) (bool, error)
 }
