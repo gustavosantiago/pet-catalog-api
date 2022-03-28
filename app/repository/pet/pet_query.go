@@ -68,5 +68,11 @@ func (pr *PetRepo) Update(id int64, p models.UpdatePetInput) (models.Pet, error)
 }
 
 func (pr *PetRepo) Delete(id int64) (bool, error) {
+	result := pr.Conn.Delete(&models.Pet{}, id)
+
+	if result.Error != nil {
+		return false, result.Error
+	}
+
 	return true, nil
 }
